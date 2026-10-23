@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["boutique_db"]
+}
+
+enum OrderStatus {
+  RECEIVED
+  CUTTING
+  STITCHING
+  FINISHING
+  READY
+  DELIVERED
+  CANCELLED
+
+  @@schema("boutique_db")
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  BANK_TRANSFER
+  OTHER
+
+  @@schema("boutique_db")
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  email     String?
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders      Order[]
+  measurements Measurement[]
+
+  @@index([name])
+  @@schema("boutique_db")
+}
+
+model Order {
+  id                   String      @id @default(cuid())
+  orderNumber          String      @unique
+  customerId           String
+  orderDate            DateTime    @default(now())
+  expectedDeliveryDate DateTime?
+  status               OrderStatus @default(RECEIVED)
+  totalAmount          Decimal     @db.Decimal(12, 2)
+  notes                String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  customer     Customer     @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  items        OrderItem[]
+  measurements Measurement[]
+  payments     Payment[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([expectedDeliveryDate])
+  @@schema("boutique_db")
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  garmentType    String
+  quantity       Int      @default(1)
+  unitPrice      Decimal  @db.Decimal(12, 2)
+  stitchingNotes String?
+  createdAt      DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@schema("boutique_db")
+}
+
+model Measurement {
+  id                String   @id @default(cuid())
+  customerId        String
+  orderId           String?
+  garmentType       String
+  measurementData   Json
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  order    Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([orderId])
+  @@schema("boutique_db")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  orderId       String
+  amount        Decimal       @db.Decimal(12, 2)
+  paymentMethod PaymentMethod @default(UPI)
+  paymentDate   DateTime      @default(now())
+  notes         String?
+  createdAt     DateTime      @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([paymentDate])
+  @@schema("boutique_db")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@schema("boutique_db")
+}

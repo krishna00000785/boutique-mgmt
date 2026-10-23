@@ -105,7 +105,10 @@ jobs:
 
       - name: Build Vercel deployment
         working-directory: backend
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }} --debug
+        env:
+          PATH: /home/runner/.nvm/versions/node/$(node -v)/bin:/usr/local/bin:/usr/bin:/bin
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Deploy to production
         working-directory: backend

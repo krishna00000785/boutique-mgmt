@@ -28,7 +28,7 @@ CREATE TABLE "boutique_db"."Order" (
     "customerId" TEXT NOT NULL,
     "orderDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expectedDeliveryDate" TIMESTAMP(3),
-    "status" "OrderStatus" NOT NULL DEFAULT 'RECEIVED',
+    "status" "boutique_db"."OrderStatus" NOT NULL DEFAULT 'RECEIVED',
     "totalAmount" DECIMAL(12,2) NOT NULL,
     "notes" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -69,7 +69,7 @@ CREATE TABLE "boutique_db"."Payment" (
     "id" TEXT NOT NULL,
     "orderId" TEXT NOT NULL,
     "amount" DECIMAL(12,2) NOT NULL,
-    "paymentMethod" "PaymentMethod" NOT NULL DEFAULT 'UPI',
+    "paymentMethod" "boutique_db"."PaymentMethod" NOT NULL DEFAULT 'UPI',
     "paymentDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "notes" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -128,6 +128,10 @@ CREATE UNIQUE INDEX "User_email_key" ON "boutique_db"."User"("email");
 
 -- AddForeignKey
 ALTER TABLE "boutique_db"."Order" ADD CONSTRAINT "Order_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "boutique_db"."Customer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "boutique_db"."OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "boutique_db"."Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "boutique_db"."Measurement" ADD CONSTRAINT "Measurement_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "boutique_db"."Customer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "boutique_db"."Measurement" ADD CONSTRAINT "Measurement_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "boutique_db"."Order"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "boutique_db"."Payment" ADD CONSTRAINT "Payment_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "boutique_db"."Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "boutique_db"."OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "boutique_db"."Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;

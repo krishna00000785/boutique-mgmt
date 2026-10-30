@@ -241,14 +241,14 @@ export default function CreateOrder() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 pb-10">
+    <div className="mx-auto min-w-0 max-w-5xl space-y-4 pb-8 sm:space-y-6 sm:pb-10">
       {/* Page heading */}
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-start gap-3 sm:items-center">
         <button
           type="button"
           onClick={() => navigate('/orders')}
           aria-label="Back to orders"
-          className="rounded-lg border border-gray-200 bg-white p-2.5 text-gray-600 hover:bg-gray-50"
+          className="mt-1 shrink-0 rounded-lg border border-gray-200 bg-white p-2.5 text-gray-600 hover:bg-gray-50 sm:mt-0"
         >
           <ArrowLeft size={19} />
         </button>
@@ -279,8 +279,8 @@ export default function CreateOrder() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Customer information */}
-        <section className="rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
-          <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
+        <section className="overflow-hidden rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
+          <div className="flex items-center gap-3 border-b border-gray-100 px-4 py-4 sm:px-5">
             <div className="rounded-lg bg-[#FAF5EB] p-2 text-[#760D2D]">
               <UserRound size={20} />
             </div>
@@ -295,7 +295,7 @@ export default function CreateOrder() {
             </div>
           </div>
 
-          <div className="p-5">
+          <div className="p-4 sm:p-5">
             <label htmlFor="customerId" className={labelClass}>
               Customer <span className="text-red-500">*</span>
             </label>
@@ -355,8 +355,8 @@ export default function CreateOrder() {
         </section>
 
         {/* Garment details */}
-        <section className="rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
-          <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-4">
+        <section className="overflow-hidden rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
+          <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-5">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-[#FAF5EB] p-2 text-[#760D2D]">
                 <Scissors size={20} />
@@ -375,7 +375,7 @@ export default function CreateOrder() {
             <button
               type="button"
               onClick={addGarment}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[#B88736]/40 px-3 py-2 text-sm font-medium text-[#760D2D] hover:bg-[#FAF5EB]"
+              className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg border border-[#B88736]/40 px-3 py-2 text-sm font-medium text-[#760D2D] hover:bg-[#FAF5EB]"
             >
               <Plus size={16} />
               <span className="hidden sm:inline">Add Garment</span>
@@ -383,11 +383,11 @@ export default function CreateOrder() {
             </button>
           </div>
 
-          <div className="space-y-4 p-5">
+          <div className="space-y-4 p-4 sm:p-5">
             {garments.map((garment, index) => (
               <div
                 key={index}
-                className="rounded-lg border border-gray-200 p-4"
+                className="rounded-lg border border-gray-200 p-3 sm:p-4"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-gray-700">
@@ -496,7 +496,7 @@ export default function CreateOrder() {
         </section>
 
         {/* Delivery information */}
-        <section className="rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
+        <section className="overflow-hidden rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
           <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
             <div className="rounded-lg bg-[#FAF5EB] p-2 text-[#760D2D]">
               <CalendarDays size={20} />
@@ -569,7 +569,7 @@ export default function CreateOrder() {
         </section>
 
         {/* Payment */}
-        <section className="rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
+        <section className="overflow-hidden rounded-xl border border-[#B88736]/20 bg-white shadow-sm">
           <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
             <div className="rounded-lg bg-[#FAF5EB] p-2 text-[#760D2D]">
               <IndianRupee size={20} />
@@ -586,7 +586,7 @@ export default function CreateOrder() {
           </div>
 
           <div className="space-y-4 p-5">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-4">
               <span className="text-sm text-gray-600">
                 Total Order Amount
               </span>
@@ -637,7 +637,7 @@ export default function CreateOrder() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg bg-[#FAF5EB] p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-[#FAF5EB] p-3 sm:p-4">
               <div>
                 <p className="text-sm font-medium text-[#4B1020]">
                   Balance Due
@@ -648,7 +648,7 @@ export default function CreateOrder() {
               </div>
 
               <span
-                className={`text-xl font-semibold ${
+                className={`break-words text-lg font-semibold sm:text-xl ${
                   balanceAmount < 0 ? 'text-red-600' : 'text-[#760D2D]'
                 }`}
               >
@@ -664,7 +664,7 @@ export default function CreateOrder() {
             type="button"
             onClick={() => navigate('/orders')}
             disabled={submitting}
-            className="rounded-lg border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="min-h-11 rounded-lg border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -679,7 +679,7 @@ export default function CreateOrder() {
               advance < 0 ||
               advance > totalAmount
             }
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#760D2D] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#4B1020] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#760D2D] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#4B1020] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <ShoppingBag size={18} />
             {submitting ? 'Creating Order...' : 'Create Order'}

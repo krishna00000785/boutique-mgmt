@@ -36,21 +36,21 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-3xl space-y-6">
-      <h2 className="text-3xl font-semibold text-[#4B1020]">Settings</h2>
+    <div className="w-full max-w-3xl space-y-5 sm:space-y-6">
+      <h2 className="text-2xl font-semibold text-[#4B1020] sm:text-3xl">Settings</h2>
       {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
       {message && <p role="status" className="text-sm text-green-700">{message}</p>}
-      <form onSubmit={save} className="space-y-5 border-y border-[#B88736]/20 py-5">
-        <h3 className="text-xl font-semibold text-[#4B1020]">Browser Preferences</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
+      <form onSubmit={save} className="space-y-5 border-y border-[#B88736]/20 py-4 sm:py-5">
+        <h3 className="text-lg font-semibold text-[#4B1020] sm:text-xl">Browser Preferences</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="text-sm">Default measurement unit<select value={unit} onChange={(event) => setUnit(event.target.value as MeasurementUnit)} className={inputClass}><option value="INCH">Inches</option><option value="CM">Centimetres</option></select></label>
           <label className="text-sm">Default payment method<select value={method} onChange={(event) => setMethod(event.target.value as PaymentMethod)} className={inputClass}>{paymentMethods.map((value) => <option key={value} value={value}>{value.replaceAll('_', ' ')}</option>)}</select></label>
         </div>
-        <button className="flex items-center gap-2 rounded-lg bg-[#760D2D] px-4 py-2 text-sm text-white"><Save size={17} />Save Preferences</button>
+        <button className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#760D2D] px-4 py-2 text-sm text-white transition-colors hover:bg-[#5F0A24] sm:w-auto"><Save size={17} />Save Preferences</button>
       </form>
       <section className="space-y-3 border-b border-[#B88736]/20 pb-5">
-        <div className="flex items-center justify-between gap-3"><h3 className="text-xl font-semibold text-[#4B1020]">Connection</h3><button title="Check connection" aria-label="Check connection" disabled={checking} onClick={() => { setChecking(true); setConnection('Checking...'); setRefresh((value) => value + 1) }} className="rounded-lg border border-gray-300 p-2 disabled:opacity-50"><RefreshCw size={18} className={checking ? 'animate-spin' : ''} /></button></div>
-        <p role="status" className="text-sm text-gray-700">{connection}</p>
+        <div className="flex items-center justify-between gap-3"><h3 className="text-lg font-semibold text-[#4B1020] sm:text-xl">Connection</h3><button type="button" title="Check connection" aria-label="Check connection" disabled={checking} onClick={() => { setChecking(true); setConnection('Checking...'); setRefresh((value) => value + 1) }} className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 p-2 transition-colors hover:bg-gray-50 disabled:opacity-50"><RefreshCw size={18} className={checking ? 'animate-spin' : ''} /></button></div>
+        <p role="status" className="break-words text-sm text-gray-700">{connection}</p>
       </section>
     </div>
   )

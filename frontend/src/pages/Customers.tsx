@@ -154,14 +154,14 @@ export default function Customers() {
   }
 
   return (
-    <div className="space-y-6">
-      <section className="flex flex-wrap items-center justify-between gap-4">
+    <div className="min-w-0 space-y-4 sm:space-y-6">
+      <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <p className="text-sm font-medium tracking-widest text-[#B88736]">
             CUSTOMER MANAGEMENT
           </p>
 
-          <h2 className="mt-2 text-3xl font-semibold text-[#4B1020]">
+          <h2 className="mt-2 text-2xl font-semibold text-[#4B1020] sm:text-3xl">
             Customers
           </h2>
 
@@ -172,7 +172,7 @@ export default function Customers() {
 
         <button
           onClick={openCreateForm}
-          className="flex items-center gap-2 rounded-lg bg-[#760D2D] px-4 py-3 text-sm font-medium text-white hover:bg-[#4B1020]"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#760D2D] px-4 py-3 text-sm font-medium text-white hover:bg-[#4B1020] sm:w-auto"
         >
           <Plus size={18} />
           Add Customer
@@ -188,8 +188,8 @@ export default function Customers() {
         </div>
       )}
 
-      <section className="rounded-xl border border-[#B88736]/20 bg-white p-5 shadow-sm">
-        <div className="relative max-w-md">
+      <section className="rounded-xl border border-[#B88736]/20 bg-white p-3 shadow-sm sm:p-5">
+        <div className="relative w-full sm:max-w-md">
           <Search
             size={18}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -203,7 +203,80 @@ export default function Customers() {
           />
         </div>
 
-        <div className="mt-6 overflow-x-auto">
+        {/* Mobile customer cards */}
+        <div className="mt-5 space-y-3 md:hidden">
+          {loading ? (
+            <div className="py-10 text-center text-sm text-gray-500">
+              Loading customers...
+            </div>
+          ) : customers.length === 0 ? (
+            <div className="py-10 text-center">
+              <Users size={32} className="mx-auto text-[#B88736]" />
+              <p className="mt-3 font-medium text-[#4B1020]">No customers found</p>
+              <p className="mt-1 text-sm text-gray-500">
+                Add your first customer to get started.
+              </p>
+            </div>
+          ) : (
+            customers.map((customer) => (
+              <article
+                key={customer.id}
+                className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="break-words font-semibold text-[#4B1020]">
+                      {customer.name}
+                    </h3>
+                    <p className="mt-1 break-words text-sm text-gray-700">
+                      {customer.phone}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <Link
+                      to={`/measurements?customerId=${encodeURIComponent(customer.id)}`}
+                      aria-label={`Measurements for ${customer.name}`}
+                      title="Customer measurements"
+                      className="rounded-lg p-2 text-[#760D2D] hover:bg-[#FAF5EB]"
+                    >
+                      <Ruler size={17} />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => openEditForm(customer)}
+                      aria-label={`Edit ${customer.name}`}
+                      className="rounded-lg p-2 text-[#760D2D] hover:bg-[#FAF5EB]"
+                    >
+                      <Pencil size={17} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleDelete(customer)}
+                      aria-label={`Delete ${customer.name}`}
+                      className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 size={17} />
+                    </button>
+                  </div>
+                </div>
+
+                <dl className="mt-3 space-y-2 border-t border-gray-100 pt-3 text-sm">
+                  <div>
+                    <dt className="text-xs text-gray-500">Email</dt>
+                    <dd className="break-words text-gray-700">{customer.email || '—'}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-gray-500">Address</dt>
+                    <dd className="break-words text-gray-700">{customer.address || '—'}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))
+          )}
+        </div>
+
+        {/* Desktop/tablet customer table */}
+        <div className="mt-6 hidden overflow-x-auto md:block">
           <table className="w-full min-w-[650px] text-left text-sm">
             <thead>
               <tr className="border-b border-gray-200 text-gray-500">
@@ -211,37 +284,21 @@ export default function Customers() {
                 <th className="px-3 py-3 font-medium">Phone</th>
                 <th className="px-3 py-3 font-medium">Email</th>
                 <th className="px-3 py-3 font-medium">Address</th>
-                <th className="px-3 py-3 text-right font-medium">
-                  Actions
-                </th>
+                <th className="px-3 py-3 text-right font-medium">Actions</th>
               </tr>
             </thead>
-
             <tbody>
               {loading ? (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-3 py-12 text-center text-gray-500"
-                  >
+                  <td colSpan={5} className="px-3 py-12 text-center text-gray-500">
                     Loading customers...
                   </td>
                 </tr>
               ) : customers.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-3 py-12 text-center"
-                  >
-                    <Users
-                      size={32}
-                      className="mx-auto text-[#B88736]"
-                    />
-
-                    <p className="mt-3 font-medium text-[#4B1020]">
-                      No customers found
-                    </p>
-
+                  <td colSpan={5} className="px-3 py-12 text-center">
+                    <Users size={32} className="mx-auto text-[#B88736]" />
+                    <p className="mt-3 font-medium text-[#4B1020]">No customers found</p>
                     <p className="mt-1 text-sm text-gray-500">
                       Add your first customer to get started.
                     </p>
@@ -256,19 +313,9 @@ export default function Customers() {
                     <td className="px-3 py-4 font-medium text-[#4B1020]">
                       {customer.name}
                     </td>
-
-                    <td className="px-3 py-4">
-                      {customer.phone}
-                    </td>
-
-                    <td className="px-3 py-4">
-                      {customer.email || '—'}
-                    </td>
-
-                    <td className="px-3 py-4">
-                      {customer.address || '—'}
-                    </td>
-
+                    <td className="px-3 py-4">{customer.phone}</td>
+                    <td className="px-3 py-4">{customer.email || '—'}</td>
+                    <td className="px-3 py-4">{customer.address || '—'}</td>
                     <td className="px-3 py-4">
                       <div className="flex justify-end gap-2">
                         <Link
@@ -280,14 +327,15 @@ export default function Customers() {
                           <Ruler size={17} />
                         </Link>
                         <button
+                          type="button"
                           onClick={() => openEditForm(customer)}
                           aria-label={`Edit ${customer.name}`}
                           className="rounded-lg p-2 text-[#760D2D] hover:bg-[#FAF5EB]"
                         >
                           <Pencil size={17} />
                         </button>
-
                         <button
+                          type="button"
                           onClick={() => void handleDelete(customer)}
                           aria-label={`Delete ${customer.name}`}
                           className="rounded-lg p-2 text-red-600 hover:bg-red-50"
@@ -302,19 +350,18 @@ export default function Customers() {
             </tbody>
           </table>
         </div>
-
         <p className="mt-4 text-xs text-gray-400">
           Showing up to 100 customers.
         </p>
       </section>
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-3 sm:items-center sm:p-4">
           <section
             role="dialog"
             aria-modal="true"
             aria-labelledby="customer-form-title"
-            className="my-auto w-full max-w-lg rounded-2xl border border-[#B88736]/30 bg-white p-6 shadow-xl"
+            className="my-3 w-full max-w-lg rounded-2xl border border-[#B88736]/30 bg-white p-4 shadow-xl sm:my-auto sm:p-6"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -324,7 +371,7 @@ export default function Customers() {
 
                 <h3
                   id="customer-form-title"
-                  className="mt-2 text-2xl font-semibold text-[#4B1020]"
+                  className="mt-2 text-xl font-semibold text-[#4B1020] sm:text-2xl"
                 >
                   {editingCustomer
                     ? 'Edit Customer'
@@ -446,11 +493,11 @@ export default function Customers() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 border-t border-gray-100 pt-4">
+              <div className="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="rounded-lg border border-gray-200 px-4 py-3 text-sm"
+                  className="min-h-11 rounded-lg border border-gray-200 px-4 py-3 text-sm sm:min-h-0"
                 >
                   Cancel
                 </button>
@@ -458,7 +505,7 @@ export default function Customers() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-[#760D2D] px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+                  className="min-h-11 rounded-lg bg-[#760D2D] px-5 py-3 text-sm font-medium text-white disabled:opacity-60 sm:min-h-0"
                 >
                   {saving
                     ? 'Saving...'

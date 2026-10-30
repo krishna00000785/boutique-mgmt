@@ -161,7 +161,7 @@ export default function Orders() {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 sm:space-y-6">
       {/* Page heading */}
       <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
@@ -169,7 +169,7 @@ export default function Orders() {
             ORDER MANAGEMENT
           </p>
 
-          <h1 className="mt-1 text-3xl font-semibold text-[#4B1020]">
+          <h1 className="mt-1 text-2xl font-semibold text-[#4B1020] sm:text-3xl">
             Orders
           </h1>
 
@@ -181,7 +181,7 @@ export default function Orders() {
         <button
           type="button"
           onClick={() => navigate('/orders/new')}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#760D2D] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#4B1020]"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#760D2D] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#4B1020] sm:w-auto"
         >
           <Plus size={18} />
           New Order
@@ -189,7 +189,7 @@ export default function Orders() {
       </section>
 
       {/* Summary cards */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <SummaryCard
           title="Total Orders"
           value={orders.length.toString()}
@@ -216,8 +216,8 @@ export default function Orders() {
       </section>
 
       {/* Filters */}
-      <section className="rounded-xl border border-[#B88736]/20 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-3 md:flex-row">
+      <section className="rounded-xl border border-[#B88736]/20 bg-white p-3 shadow-sm sm:p-4">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
             <Search
               size={18}
@@ -237,7 +237,7 @@ export default function Orders() {
             onChange={(event) =>
               setStatusFilter(event.target.value as OrderStatus | '')
             }
-            className="rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-[#B88736]"
+            className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-[#B88736] sm:w-auto"
           >
             <option value="">All statuses</option>
 
@@ -253,7 +253,7 @@ export default function Orders() {
             onClick={() => void loadOrders()}
             disabled={loading}
             title="Refresh orders"
-            className="inline-flex items-center justify-center rounded-lg border border-gray-200 px-4 py-3 text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-gray-200 px-4 py-3 text-gray-600 hover:bg-gray-50 disabled:opacity-50 sm:min-w-12"
           >
             <RefreshCw
               size={18}
@@ -315,96 +315,182 @@ export default function Orders() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[850px] text-left text-sm">
-              <thead className="bg-[#FAF5EB]/70 text-gray-500">
-                <tr>
-                  <th className="px-5 py-4 font-medium">Order</th>
-                  <th className="px-5 py-4 font-medium">Customer</th>
-                  <th className="px-5 py-4 font-medium">Order Date</th>
-                  <th className="px-5 py-4 font-medium">Delivery Date</th>
-                  <th className="px-5 py-4 font-medium">Amount</th>
-                  <th className="px-5 py-4 font-medium">Balance</th>
-                  <th className="px-5 py-4 font-medium">Status</th>
-                  <th className="px-5 py-4 font-medium">Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredOrders.map((order) => (
-                  <tr
-                    key={order.id}
-                    className="border-t border-gray-100 transition hover:bg-[#FAF5EB]/40"
-                  >
-                    <td className="px-5 py-4 font-medium text-[#760D2D]">
-                      {order.orderNumber}
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <p className="font-medium text-gray-800">
+          <>
+            {/* Mobile layout: compact order cards */}
+            <div className="divide-y divide-gray-100 md:hidden">
+              {filteredOrders.map((order) => (
+                <article key={order.id} className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="break-words font-semibold text-[#760D2D]">
+                        {order.orderNumber}
+                      </p>
+                      <p className="mt-1 break-words text-sm font-medium text-gray-800">
                         {order.customer.name}
                       </p>
-
-                      <p className="mt-1 text-xs text-gray-500">
+                      <p className="mt-0.5 text-xs text-gray-500">
                         {order.customer.phone}
                       </p>
-                    </td>
+                    </div>
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles[order.status]}`}
+                    >
+                      {statusLabels[order.status]}
+                    </span>
+                  </div>
 
-                    <td className="px-5 py-4 text-gray-600">
-                      {formatDate(order.orderDate)}
-                    </td>
+                  <div className="grid grid-cols-2 gap-3 rounded-lg bg-[#FAF5EB]/60 p-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Order date</p>
+                      <p className="mt-1 text-sm text-gray-700">{formatDate(order.orderDate)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Delivery date</p>
+                      <p className="mt-1 text-sm text-gray-700">{formatDate(order.deliveryDate)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Amount</p>
+                      <p className="mt-1 text-sm font-medium text-gray-800">
+                        {currencyFormatter.format(order.totalAmount)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Balance</p>
+                      <p className="mt-1 text-sm font-medium text-gray-800">
+                        {currencyFormatter.format(order.balanceAmount)}
+                      </p>
+                    </div>
+                  </div>
 
-                    <td className="px-5 py-4 text-gray-600">
-                      {formatDate(order.deliveryDate)}
-                    </td>
+                  <div>
+                    <label
+                      htmlFor={`order-status-${order.id}`}
+                      className="mb-1.5 block text-xs font-medium text-gray-600"
+                    >
+                      Update status
+                    </label>
+                    <select
+                      id={`order-status-${order.id}`}
+                      value={order.status}
+                      disabled={updatingOrderIds.has(order.id)}
+                      onChange={(event) =>
+                        void handleStatusChange(order.id, event.target.value as OrderStatus)
+                      }
+                      className={`w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium outline-none transition focus:border-[#B88736] focus:ring-2 focus:ring-[#B88736]/20 disabled:cursor-wait disabled:opacity-60 ${statusStyles[order.status]}`}
+                    >
+                      {Object.entries(statusLabels).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                    {updatingOrderIds.has(order.id) && (
+                      <p className="mt-1 text-xs text-gray-500">Updating status...</p>
+                    )}
+                  </div>
 
-                    <td className="px-5 py-4 font-medium text-gray-800">
-                      {currencyFormatter.format(order.totalAmount)}
-                    </td>
+                  <div className="flex flex-wrap gap-2">
+                    <Link
+                      to={`/measurements?customerId=${encodeURIComponent(order.customerId)}&orderId=${encodeURIComponent(order.id)}`}
+                      className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-[#760D2D]/20 px-3 py-2 text-sm font-medium text-[#760D2D] hover:bg-[#FAF5EB]"
+                    >
+                      <Ruler size={16} />
+                      Measurements
+                    </Link>
+                    <Link
+                      to={`/payments?orderId=${encodeURIComponent(order.id)}`}
+                      className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-[#760D2D]/20 px-3 py-2 text-sm font-medium text-[#760D2D] hover:bg-[#FAF5EB]"
+                    >
+                      <Wallet size={16} />
+                      Payments
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
 
-                    <td className="px-5 py-4 text-gray-600">
-                      {currencyFormatter.format(order.balanceAmount)}
-                    </td>
-
-                    <td className="px-5 py-4">
-                        <select
-                            value={order.status}
-                            disabled={updatingOrderIds.has(order.id)}
-                            onChange={(event) =>
-                            void handleStatusChange(
-                                order.id,
-                                event.target.value as OrderStatus,
-                            )
-                            }
-                            aria-label={`Update status for ${order.orderNumber}`}
-                            className={`rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium outline-none transition focus:border-[#B88736] focus:ring-2 focus:ring-[#B88736]/20 disabled:cursor-wait disabled:opacity-60 ${
-                            statusStyles[order.status]
-                            }`}
-                        >
-                            {Object.entries(statusLabels).map(([value, label]) => (
-                            <option key={value} value={value}>
-                                {label}
-                            </option>
-                            ))}
-                        </select>
-
-                        {updatingOrderIds.has(order.id) && (
-                            <span className="ml-2 text-xs text-gray-500">
-                            Updating...
-                            </span>
-                        )}
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex gap-2">
-                        <Link to={`/measurements?customerId=${encodeURIComponent(order.customerId)}&orderId=${encodeURIComponent(order.id)}`} title="Order measurements" aria-label={`Measurements for ${order.orderNumber}`} className="rounded-lg p-2 text-[#760D2D] hover:bg-[#FAF5EB]"><Ruler size={17} /></Link>
-                        <Link to={`/payments?orderId=${encodeURIComponent(order.id)}`} title="Order payments" aria-label={`Payments for ${order.orderNumber}`} className="rounded-lg p-2 text-[#760D2D] hover:bg-[#FAF5EB]"><Wallet size={17} /></Link>
-                      </div>
-                    </td>
+            {/* Desktop/tablet layout: retain the full data table */}
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full min-w-[850px] text-left text-sm">
+                <thead className="bg-[#FAF5EB]/70 text-gray-500">
+                  <tr>
+                    <th className="px-5 py-4 font-medium">Order</th>
+                    <th className="px-5 py-4 font-medium">Customer</th>
+                    <th className="px-5 py-4 font-medium">Order Date</th>
+                    <th className="px-5 py-4 font-medium">Delivery Date</th>
+                    <th className="px-5 py-4 font-medium">Amount</th>
+                    <th className="px-5 py-4 font-medium">Balance</th>
+                    <th className="px-5 py-4 font-medium">Status</th>
+                    <th className="px-5 py-4 font-medium">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredOrders.map((order) => (
+                    <tr
+                      key={order.id}
+                      className="border-t border-gray-100 transition hover:bg-[#FAF5EB]/40"
+                    >
+                      <td className="px-5 py-4 font-medium text-[#760D2D]">
+                        {order.orderNumber}
+                      </td>
+                      <td className="px-5 py-4">
+                        <p className="font-medium text-gray-800">{order.customer.name}</p>
+                        <p className="mt-1 text-xs text-gray-500">{order.customer.phone}</p>
+                      </td>
+                      <td className="px-5 py-4 text-gray-600">{formatDate(order.orderDate)}</td>
+                      <td className="px-5 py-4 text-gray-600">{formatDate(order.deliveryDate)}</td>
+                      <td className="px-5 py-4 font-medium text-gray-800">
+                        {currencyFormatter.format(order.totalAmount)}
+                      </td>
+                      <td className="px-5 py-4 text-gray-600">
+                        {currencyFormatter.format(order.balanceAmount)}
+                      </td>
+                      <td className="px-5 py-4">
+                        <select
+                          value={order.status}
+                          disabled={updatingOrderIds.has(order.id)}
+                          onChange={(event) =>
+                            void handleStatusChange(order.id, event.target.value as OrderStatus)
+                          }
+                          aria-label={`Update status for ${order.orderNumber}`}
+                          className={`rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium outline-none transition focus:border-[#B88736] focus:ring-2 focus:ring-[#B88736]/20 disabled:cursor-wait disabled:opacity-60 ${statusStyles[order.status]}`}
+                        >
+                          {Object.entries(statusLabels).map(([value, label]) => (
+                            <option key={value} value={value}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                        {updatingOrderIds.has(order.id) && (
+                          <span className="ml-2 text-xs text-gray-500">Updating...</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex gap-2">
+                          <Link
+                            to={`/measurements?customerId=${encodeURIComponent(order.customerId)}&orderId=${encodeURIComponent(order.id)}`}
+                            title="Order measurements"
+                            aria-label={`Measurements for ${order.orderNumber}`}
+                            className="rounded-lg p-2 text-[#760D2D] hover:bg-[#FAF5EB]"
+                          >
+                            <Ruler size={17} />
+                          </Link>
+                          <Link
+                            to={`/payments?orderId=${encodeURIComponent(order.id)}`}
+                            title="Order payments"
+                            aria-label={`Payments for ${order.orderNumber}`}
+                            className="rounded-lg p-2 text-[#760D2D] hover:bg-[#FAF5EB]"
+                          >
+                            <Wallet size={17} />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </section>
     </div>

@@ -87,10 +87,10 @@ export default function Reports() {
   rangeEnd.setMilliseconds(rangeEnd.getMilliseconds() - 1)
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-3xl font-semibold text-[#4B1020]">Reports</h2><button onClick={exportCsv} disabled={!result || loading || !!error} className="flex items-center gap-2 rounded-lg border border-[#B88736]/40 px-4 py-2 text-sm text-[#760D2D] disabled:opacity-50"><Download size={18} />Export CSV</button></div>
-      <form onSubmit={generate} className="space-y-4 border-y border-[#B88736]/20 py-5">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><h2 className="text-2xl font-semibold text-[#4B1020] sm:text-3xl">Reports</h2><button onClick={exportCsv} disabled={!result || loading || !!error} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#B88736]/40 px-4 py-2 text-sm text-[#760D2D] disabled:opacity-50 sm:w-auto"><Download size={18} />Export CSV</button></div>
+      <form onSubmit={generate} className="space-y-4 rounded-xl border-y border-[#B88736]/20 py-4 sm:py-5">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           <label className="space-y-1 text-sm">Report<select value={form.kind} onChange={(event) => update('kind', event.target.value)} className={inputClass}><option value="orders">Orders</option><option value="payments">Payments</option></select></label>
           <label className="space-y-1 text-sm">Period<select value={form.period} onChange={(event) => update('period', event.target.value)} className={inputClass}><option value="month">Monthly</option><option value="week">Weekly (Mon-Sun)</option><option value="custom">Custom range</option></select></label>
           {form.period === 'month' && <label className="space-y-1 text-sm">Month<input required type="month" value={form.month} onChange={(event) => update('month', event.target.value)} className={inputClass} /></label>}
@@ -101,18 +101,45 @@ export default function Reports() {
           <label className="space-y-1 text-sm">Garment<input maxLength={100} value={form.garmentType} onChange={(event) => update('garmentType', event.target.value)} className={inputClass} /></label>
           {form.kind === 'orders' ? <label className="space-y-1 text-sm">Balance<select value={form.balance} onChange={(event) => update('balance', event.target.value)} className={inputClass}><option value="all">All orders</option><option value="outstanding">Outstanding</option><option value="paid">Fully paid</option></select></label> : <label className="space-y-1 text-sm">Payment method<select value={form.paymentMethod} onChange={(event) => update('paymentMethod', event.target.value)} className={inputClass}><option value="">All methods</option>{paymentMethods.map((method) => <option key={method} value={method}>{method.replaceAll('_', ' ')}</option>)}</select></label>}
         </div>
-        <button disabled={loading} className="flex items-center gap-2 rounded-lg bg-[#760D2D] px-4 py-2 text-sm text-white disabled:opacity-50"><ChartNoAxesCombined size={18} />{loading ? 'Generating...' : 'Generate Report'}</button>
+        <button disabled={loading} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#760D2D] px-4 py-2 text-sm text-white disabled:opacity-50 sm:w-auto"><ChartNoAxesCombined size={18} />{loading ? 'Generating...' : 'Generate Report'}</button>
       </form>
       {customerError && <p role="alert" className="text-sm text-amber-800">{customerError}</p>}
       {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
       {loading ? <p role="status">Generating report...</p> : result && !error && <>
-        <div><h3 className="text-xl font-semibold text-[#4B1020]">{result.kind === 'orders' ? 'Order Report' : 'Payment Report'}</h3><p className="mt-1 text-sm text-gray-500">{new Date(request.from).toLocaleDateString('en-IN')} - {rangeEnd.toLocaleDateString('en-IN')}</p></div>
-        <dl className="grid gap-4 border-b border-[#B88736]/20 pb-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div><h3 className="text-lg font-semibold text-[#4B1020] sm:text-xl">{result.kind === 'orders' ? 'Order Report' : 'Payment Report'}</h3><p className="mt-1 text-sm text-gray-500">{new Date(request.from).toLocaleDateString('en-IN')} - {rangeEnd.toLocaleDateString('en-IN')}</p></div>
+        <dl className="grid grid-cols-1 gap-3 border-b border-[#B88736]/20 pb-5 min-[420px]:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           <div><dt className="text-sm text-gray-500">{result.kind === 'orders' ? 'Orders' : 'Payments'}</dt><dd className="mt-1 break-words text-2xl font-semibold">{result.summary.count}</dd></div>
           <div><dt className="text-sm text-gray-500">{result.kind === 'orders' ? 'Order value' : 'Received'}</dt><dd className="mt-1 break-words text-2xl font-semibold">{currency(result.summary.totalAmount)}</dd></div>
           {result.kind === 'orders' && <><div><dt className="text-sm text-gray-500">Paid to date</dt><dd className="mt-1 break-words text-2xl font-semibold">{currency(result.summary.paidAmount)}</dd></div><div><dt className="text-sm text-gray-500">Outstanding</dt><dd className="mt-1 break-words text-2xl font-semibold text-[#760D2D]">{currency(result.summary.balanceAmount)}</dd></div></>}
         </dl>
-        <div className="overflow-x-auto"><table className="w-full min-w-[850px] text-left text-sm"><thead className="border-b border-gray-200 text-gray-500"><tr>{(result.kind === 'orders' ? ['Order', 'Customer', 'Date', 'Garments', 'Status', 'Total', 'Paid', 'Balance'] : ['Date', 'Order', 'Customer', 'Method', 'Amount', 'Notes']).map((heading) => <th key={heading} className="px-3 py-3 font-medium">{heading}</th>)}</tr></thead><tbody>
+        <div className="space-y-3 md:hidden">
+          {result.summary.count === 0 ? <p className="py-8 text-center text-gray-500">No records match this report.</p> : result.kind === 'orders' ? result.orders.map((order) => (
+            <article key={order.id} className="min-w-0 rounded-xl border border-[#B88736]/20 bg-white p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0"><p className="break-words font-semibold text-[#760D2D]">{order.orderNumber}</p><p className="break-words text-sm text-gray-700">{order.customer.name}</p><p className="mt-1 text-xs text-gray-500">{new Date(order.orderDate).toLocaleDateString('en-IN')}</p></div>
+                <span className="shrink-0 rounded-full bg-[#760D2D]/5 px-2 py-1 text-xs text-[#760D2D]">{order.status}</span>
+              </div>
+              <p className="mt-3 break-words text-sm text-gray-600">{order.items.map((item) => `${item.garmentType} (${item.quantity})`).join(', ')}</p>
+              <dl className="mt-3 grid grid-cols-2 gap-3 border-t border-gray-100 pt-3 text-sm">
+                <div><dt className="text-gray-500">Total</dt><dd className="font-semibold">{currency(order.totalAmount)}</dd></div>
+                <div><dt className="text-gray-500">Paid</dt><dd className="font-semibold">{currency(order.advanceAmount)}</dd></div>
+                <div className="col-span-2"><dt className="text-gray-500">Balance</dt><dd className="font-semibold text-[#760D2D]">{currency(order.balanceAmount)}</dd></div>
+              </dl>
+            </article>
+          )) : result.payments.map((payment) => (
+            <article key={payment.id} className="min-w-0 rounded-xl border border-[#B88736]/20 bg-white p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0"><p className="break-words font-semibold text-[#760D2D]">{payment.order.orderNumber}</p><p className="break-words text-sm text-gray-700">{payment.order.customer.name}</p><p className="mt-1 text-xs text-gray-500">{new Date(payment.paymentDate).toLocaleDateString('en-IN')}</p></div>
+                <p className="shrink-0 font-semibold text-[#4B1020]">{currency(payment.amount)}</p>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3 text-sm">
+                <span className="rounded-full bg-[#760D2D]/5 px-2.5 py-1 text-xs text-[#760D2D]">{payment.paymentMethod.replaceAll('_', ' ')}</span>
+                <p className="break-words text-xs text-gray-600">{payment.notes || 'No notes'}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="hidden overflow-x-auto rounded-lg border border-gray-100 md:block"><table className="w-full min-w-[850px] text-left text-sm"><thead className="border-b border-gray-200 text-gray-500"><tr>{(result.kind === 'orders' ? ['Order', 'Customer', 'Date', 'Garments', 'Status', 'Total', 'Paid', 'Balance'] : ['Date', 'Order', 'Customer', 'Method', 'Amount', 'Notes']).map((heading) => <th key={heading} className="px-3 py-3 font-medium">{heading}</th>)}</tr></thead><tbody>
           {result.summary.count === 0 ? <tr><td colSpan={result.kind === 'orders' ? 8 : 6} className="py-8 text-center text-gray-500">No records match this report.</td></tr> : result.kind === 'orders' ? result.orders.map((order) => <tr key={order.id} className="border-b border-gray-100"><td className="px-3 py-4 text-[#760D2D]">{order.orderNumber}</td><td className="px-3 py-4">{order.customer.name}</td><td className="whitespace-nowrap px-3 py-4">{new Date(order.orderDate).toLocaleDateString('en-IN')}</td><td className="px-3 py-4">{order.items.map((item) => `${item.garmentType} (${item.quantity})`).join(', ')}</td><td className="px-3 py-4">{order.status}</td><td className="whitespace-nowrap px-3 py-4">{currency(order.totalAmount)}</td><td className="whitespace-nowrap px-3 py-4">{currency(order.advanceAmount)}</td><td className="whitespace-nowrap px-3 py-4">{currency(order.balanceAmount)}</td></tr>) : result.payments.map((payment) => <tr key={payment.id} className="border-b border-gray-100"><td className="whitespace-nowrap px-3 py-4">{new Date(payment.paymentDate).toLocaleDateString('en-IN')}</td><td className="px-3 py-4 text-[#760D2D]">{payment.order.orderNumber}</td><td className="px-3 py-4">{payment.order.customer.name}</td><td className="px-3 py-4">{payment.paymentMethod.replaceAll('_', ' ')}</td><td className="whitespace-nowrap px-3 py-4">{currency(payment.amount)}</td><td className="max-w-xs break-words px-3 py-4">{payment.notes || '-'}</td></tr>)}
         </tbody></table></div>
       </>}
